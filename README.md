@@ -15,7 +15,7 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 * pandas=2.2.2
 
 # 2. Datasets
-We physically tested 270 retired lithium-ion batteries, covering 3 cathode types, 4 historical usages, 3 physical formats, and 4 capacity designs. See more details on [Pulse-Voltage-Response-Generation](https://github.com/terencetaothucb/Pulse-Voltage-Response-Generation).
+* We physically tested 270 retired lithium-ion batteries, covering 3 cathode types, 4 historical usages, 3 physical formats, and 4 capacity designs. See more details on [Pulse-Voltage-Response-Generation](https://github.com/terencetaothucb/Pulse-Voltage-Response-Generation).
 ## Battery Types
 |Cathode Material|Nominal Capacity (Ah)|Physical Format|Historical Usage|Quantity|
 |:--|:--|:--|:--|:--|
@@ -26,7 +26,7 @@ We physically tested 270 retired lithium-ion batteries, covering 3 cathode types
 
 # 3. Experiment
 ## Settings
-Python file "configuration" contains all the hyperparameters.Change these parameters to choose battery type, model size and testing conditions.
+* Python file "configuration" contains all the hyperparameters.Change these parameters to choose battery type, model size and testing conditions.
 ```python
 hyperparams = {
     'battery': 'NMC',
@@ -46,7 +46,8 @@ hyperparams = {
 }
 ```
 ## Run
-After modifying the experimental settings, run `main.py` directly.
-## Experiment setting
+* After modifying the experimental settings, run `main.py` directly.
+
+
 # 4. Experiment Details
 
