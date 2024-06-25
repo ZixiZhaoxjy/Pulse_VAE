@@ -56,11 +56,11 @@ hyperparams = {
 To allow the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information &cond&, we introduced the attention mechanism in both the encoder and decoder of the VAE. Here, we use the encoder as an example to illustrate.
 
 The encoder network in the variational autoencoder is designed to process and compress input data into a latent space. It starts by taking the 21-dimensional battery voltage response feature matrix $x$ as main input and retirement condition matrix of the retired batteries $cond=[SOC,SOH]$ as conditional input. The condition input is first transformed into an embedding $C$, belonging to a larger latent space with 64-dimension. The conditional embedding $C$ is formulated as: 
-$$ C = \text{ReLU} \left( \text{cond} \cdot W_c^T + b_c \right)$$
+$$C = \text{ReLU} \left( \text{cond} \cdot W_c^T + b_c \right)$$
 where, $W_c$, $b_c$ are the condition embedding neural network weighting matrix and bias matrix, respectively.
 
 The main input matrix $x$, representing battery pulse voltage response features, is also transformed into this 64-dimensional latent space:
-$$ H = \text{ReLU} \left( \text{x} \cdot W_h^T + b_h \right)  $$
+$$H = \text{ReLU} \left( \text{x} \cdot W_h^T + b_h \right)$$
 where,  $W_h$, $b_h$ are the main input embedding neural network weighting matrix and bias matrix, respectively. 
 
 Both $H$ and $C$ are then integrated via a cross-attention mechanism, allowing the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$:
