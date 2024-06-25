@@ -46,7 +46,7 @@ hyperparams = {
 }
 ```
 ## Run
-* After modifying the experimental settings, run `main.py` directly.
+* After changing the experiment settings, run `main.py` directly.
 
 
 # 4. Experiment Details
