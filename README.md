@@ -53,10 +53,10 @@ hyperparams = {
 
 # 4. Experiment Details
 ## 4.1 VAE(variational autoencoder) with cross attention for data generation
-To allow the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information &cond&, we introduced the attention mechanism in both the encoder and decoder of the VAE. Here, we use the encoder as an example to illustrate.
+To allow the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$, we introduced the attention mechanism in both the encoder and decoder of the VAE. Here, we use the encoder as an example to illustrate.
 
 The encoder network in the variational autoencoder is designed to process and compress input data into a latent space. It starts by taking the 21-dimensional battery voltage response feature matrix $x$ as main input and retirement condition matrix of the retired batteries $cond=[SOC,SOH]$ as conditional input. The condition input is first transformed into an embedding $C$, belonging to a larger latent space with 64-dimension. The conditional embedding $C$ is formulated as: 
-$$C = \text{ReLU} \left( \cond \cdot W_c^T + b_c \right)$$
+$$C = \text{ReLU} \left( cond \cdot W_c^T + b_c \right)$$
 where, $W_c$, $b_c$ are the condition embedding neural network weighting matrix and bias matrix, respectively.
 
 The main input matrix $x$, representing battery pulse voltage response features, is also transformed into this 64-dimensional latent space:
@@ -70,4 +70,4 @@ See the Methods section of the paper for more details.
 ## 4.2 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
 $$\overline{y} = \overline{h}(\mathbf{X}) = \frac{1}{K} \sum_{k=1}^{K} h(\mathbf{X}; \vartheta_k, \theta_k)$$
-where $\overline{y}$ is the predicted SOH value vector. $K$is the tree number in the random forest. $\vartheta_k$ and $\theta_k$ are the hyperparameters. i.e., the minimum leaf size and the maximum depth of the $k$th tree in the random forest, respectively. In this study, the hyperparameters are set as equal across different battery retirement cases, i.e.,$K=20$ , $\vartheta_k=1$, and $\theta_k=64$, for a fair comparison with the same model capability. Implementations are based on the ensemble method of the Sklearn Package (version 1.3.1) in the Python 3.11.5 environment, with a random state at 0
+where $\overline{y}$ is the predicted SOH value vector. $K$ is the tree number in the random forest. $\vartheta_k$ and $\theta_k$ are the hyperparameters. i.e., the minimum leaf size and the maximum depth of the $k$ th tree in the random forest, respectively. In this study, the hyperparameters are set as equal across different battery retirement cases, i.e.,$K=20$ , $\vartheta_k=1$, and $\theta_k=64$, for a fair comparison with the same model capability. Implementations are based on the ensemble method of the Sklearn Package (version 1.3.1) in the Python 3.11.5 environment, with a random state at 0
