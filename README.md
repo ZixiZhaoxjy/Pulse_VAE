@@ -26,7 +26,7 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 
 # 3. Experiment
 ## Settings
-* Python file "configuration" contains all the hyperparameters.Change these parameters to choose battery type, model size and testing conditions.
+* Python file "configuration" contains all the hyperparameters. Change these parameters to choose battery type, model size and testing conditions.
 ```python
 hyperparams = {
     'battery': 'NMC2.1', # NMC2.1，NMC21，LMO，LFP
@@ -46,7 +46,7 @@ hyperparams = {
 }
 ```
 ## Run
-* After changing the experiment settings, run `main.py` directly.
+* After changing the experiment settings, __run `main.py` directly.__
 
 
 # 4. Experiment Details
