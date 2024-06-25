@@ -29,8 +29,8 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 * Python file "configuration" contains all the hyperparameters.Change these parameters to choose battery type, model size and testing conditions.
 ```python
 hyperparams = {
-    'battery': 'NMC',
-    'file_path': 'battery_data/CNM_2.1Ah_W_3000.xlsx',
+    'battery': 'NMC2.1', # NMC2.1，NMC21，LMO，LFP
+    'file_path': 'battery_data/NMC_2.1Ah_W_3000.xlsx',
     'sampling_multiplier': 1,
     'feature_dim': 21,  # Dimension of the main input features
     'condition_dim': 2,  # Dimension of the conditional input (SOC + SOH)
