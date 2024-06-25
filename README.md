@@ -48,7 +48,7 @@ hyperparams = {
 ## Run
 * After changing the experiment settings, __run `main.py` directly.__
 * The experiment contains two parts:
-      1， Leverage generative machine learning to generate data under unseen retirement conditions based on already-measured data
+    * 1， Leverage generative machine learning to generate data under unseen retirement conditions based on already-measured data
 
 # 4. Experiment Details
 
