@@ -8,7 +8,9 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return np.nanmean(np.abs((y_true - y_pred) / y_true)) * 100, np.std(np.abs((y_true - y_pred) / y_true)) * 100
 
 def split_SOC_data(condition, Fts, train_SOC_values):
-    train_mask = np.isin(condition[:, 0], train_SOC_values)  # Assuming SOC is the first column
+
+    # Assuming SOC is the first column
+    train_mask = np.isin(condition[:, 0], train_SOC_values)
     # print("train_mask",train_mask)
     test_mask = ~train_mask
     # print("test_mask",test_mask)
@@ -33,10 +35,13 @@ def plot_soh_scatter(y_true, y_pred, title):
     ymin = min(min(y_true), min(y_pred))
     delta = 0.01
 
-    plt.plot([ymin-delta, ymax+delta], [ymin-delta, ymax+delta], '--', lw=8, color='gray')  # dashed line
+    # dashed line
+    plt.plot([ymin-delta, ymax+delta], [ymin-delta, ymax+delta], '--', lw=8, color='gray')
 
     #plt.grid(True)
-    plt.gca().set_aspect('equal', adjustable='box')  # Set aspect of the axis to be equal
+    # Set aspect of the axis to be equal
+    plt.gca().set_aspect('equal', adjustable='box')
+
     # Format the tick labels to two decimal places
     plt.gca().xaxis.set_major_formatter(ticker.FormatStrFormatter('%.2f'))
     plt.gca().yaxis.set_major_formatter(ticker.FormatStrFormatter('%.2f'))
@@ -80,7 +85,8 @@ def visualize_experiment_results(train_SOC_cases, all_SOC_values, mape_results_p
                     mape_values[i] = mape_results[case_index][test_SOC_indices.index(soc)]
 
             # Plot MAPE for each SOC level with different markers
-            marker = '*' if phase_index == 1 else 'o'  # Star for Phase 2, Circle for Phase 1
+            # Star for Phase 2, Circle for Phase 1
+            marker = '*' if phase_index == 1 else 'o'
             ax.scatter(x_labels, mape_values, marker=marker, s=1000, alpha=1, color=cmap(case_index % 9))
 
         # Highlight training SOC levels
@@ -106,12 +112,15 @@ def visualize_experiment_results(train_SOC_cases, all_SOC_values, mape_results_p
 
 # --- Load Data ---
 def load_data(hyperparams):
-    if (hyperparams['battery'] == "NMC"):
-        data = pd.read_excel('battery_data/data_Cylind21.xlsx', sheet_name="Sheet1")
+    if (hyperparams['battery'] == "NMC2.1"):
+        data = pd.read_excel('battery_data/NMC_2.1Ah_W_3000.xlsx', sheet_name="Sheet1")
     if (hyperparams['battery'] == "LFP"):
         data = pd.read_excel('battery_data/LFP_35Ah_W_3000.xlsx', sheet_name="SOC ALL")
     if (hyperparams['battery'] == "LMO"):
         data = pd.read_excel('battery_data/LMO_10Ah_W_3000.xlsx', sheet_name="SOC ALL")
+    if (hyperparams['battery'] == "NMC21"):
+        data = pd.read_excel('battery_data/NMC_21Ah_W_3000.xlsx', sheet_name="SOC ALL")
+
 
     data['SOC'] /= 100  # Normalize SOC by dividing by 100
     # Filter data to include only rows where SOC is less than or equal to 50% (0.5 after normalization)
@@ -126,5 +135,6 @@ def load_data(hyperparams):
     print("SOC shape:", soc.shape)
     print("SOH shape:", soh.shape)
 
-    condition = np.column_stack((soc, soh))  # Combining SOC and SOH as conditional input
+    # Combining SOC and SOH as conditional input
+    condition = np.column_stack((soc, soh))
     return features, condition, filtered_data

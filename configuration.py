@@ -1,7 +1,7 @@
 # Define Hyperparameters and Constants
 hyperparams = {
-    'battery': 'NMC',
-    'file_path': 'data_Cylind21.xlsx',
+    'battery': 'NMC2.1', # NMC2.1，NMC21，LMO，LFP
+    'file_path': 'battery_data/NMC_2.1Ah_W_3000.xlsx',
     'sampling_multiplier': 1,
     'feature_dim': 21,  # Dimension of the main input features
     'condition_dim': 2,  # Dimension of the conditional input (SOC + SOH)
@@ -13,7 +13,7 @@ hyperparams = {
     'num_heads': 1,
     'train_SOC_values': [0.05, 0.15, 0.25, 0.35, 0.45, 0.50],  # SOC values to use for training
     'all_SOC_values': [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50],  # All SOC values in the dataset
-    'watershed': 3,  # when interpolation ends
+    'mode': 3,  # when case > 3, interpolation ends; set mode to 99 for only interpolation, to -1 for only extrapolation
 }
 
 train_SOC_values_cases = [

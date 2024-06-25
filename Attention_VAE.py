@@ -76,7 +76,7 @@ def attention_vae(feature_dim, condition_dim, embedding_dim, intermediate_dim, l
     vae.compile(optimizer=Adam())
     return vae, encoder, decoder
 
-def augment_data(vae, train_features, train_condition, test_condition, encoder, decoder, sampling_multiplier, batch_size, epochs, latent_dim):
+def generate_data(vae, train_features, train_condition, test_condition, encoder, decoder, sampling_multiplier, batch_size, epochs, latent_dim):
     # Normalize feature data (training)
     feature_scaler = MinMaxScaler().fit(train_features)
     train_features_normalized = feature_scaler.transform(train_features)
@@ -93,29 +93,29 @@ def augment_data(vae, train_features, train_condition, test_condition, encoder, 
     # Generate new samples based on testing conditions
     num_samples = len(test_condition_normalized) * sampling_multiplier
     print("num_samples",num_samples)
-    random_latent_values = K.random_normal(shape=(num_samples, latent_dim), seed=0)
-    random_latent_values2 = K.random_normal(shape=(len(train_condition_normalized) * sampling_multiplier, latent_dim), seed=0)
+    random_latent_values_new = K.random_normal(shape=(num_samples, latent_dim), seed=0)
+    random_latent_values_train = K.random_normal(shape=(len(train_condition_normalized) * sampling_multiplier, latent_dim), seed=0)
 
     # Use the testing conditional input for generating data
     repeated_conditions = np.repeat(test_condition_normalized, sampling_multiplier, axis=0)
 
-    new_features_normalized = decoder.predict([random_latent_values, repeated_conditions])
+    new_features_normalized = decoder.predict([random_latent_values_new, repeated_conditions])
 
     # Denormalize the generated feature data
-    augmented_features = feature_scaler.inverse_transform(new_features_normalized)
+    generated_features = feature_scaler.inverse_transform(new_features_normalized)
 
     repeated_conditions_train = np.repeat(train_condition_normalized, sampling_multiplier, axis=0)
 
-    train_features_normalized = decoder.predict([random_latent_values2, repeated_conditions_train])
+    train_features_normalized = decoder.predict([random_latent_values_train, repeated_conditions_train])
 
     # Denormalize the generated feature data
-    train_augmented_features = feature_scaler.inverse_transform(train_features_normalized)
+    train_generated_features = feature_scaler.inverse_transform(train_features_normalized)
 
-    train_augmented_features = np.vstack([train_augmented_features, augmented_features])
+    train_generated_features = np.vstack([train_generated_features, generated_features])
 
     # Denormalize the repeated conditions to return them to their original scale
     repeated_conditions_denormalized = condition_scaler.inverse_transform(repeated_conditions)
-    # Combine augmented features with their corresponding conditions for further analysis
-    augmented_data = np.hstack([augmented_features, repeated_conditions_denormalized])
+    # Combine generated features with their corresponding conditions for further analysis
+    generated_data = np.hstack([generated_features, repeated_conditions_denormalized])
 
-    return augmented_data, augmented_features, repeated_conditions_denormalized, history, train_augmented_features
+    return generated_data, generated_features, repeated_conditions_denormalized, history, train_generated_features
