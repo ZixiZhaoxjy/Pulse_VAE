@@ -24,8 +24,8 @@ We physically tested 270 retired lithium-ion batteries, covering 3 cathode types
 |NMC|21|Pouch|BEV1|52|
 |LFP|35|Square Aluminum Shell|HEV2|56|
 
-# 3. Run
-## Experiment setting
+# 3. Experiment
+## Settings
 Python file "configuration" contains all the hyperparameters.Change these parameters to choose battery type, model size and testing conditions.
 ```python
 hyperparams = {
@@ -45,5 +45,8 @@ hyperparams = {
     'mode': 3,  # when case > 3, interpolation ends; set mode to 99 for only interpolation, to -1 for only extrapolation
 }
 ```
+## Run
+After modifying the experimental settings, run `main.py` directly.
+## Experiment setting
 # 4. Experiment Details
 
