@@ -98,7 +98,8 @@ Here is the implementation:
     z = Lambda(sampling, output_shape=(latent_dim,))([z_mean, z_log_var])
     encoder = Model(inputs=[x, condition_input], outputs=[z_mean, z_log_var, z])
 ```
-The primary function of the Decoder Network is to transform the sampled latent variable $z$ back into the original dataspace, reconstructing the input data or generating new data attended on the original or unseen retirement conditions. The implementation of the decoder with the attention mechanism is： 
+The primary function of the Decoder Network is to transform the sampled latent variable $z$ back into the original dataspace, reconstructing the input data or generating new data attended on the original or unseen retirement conditions. The first step in the decoder is a dense layer that transforms $z$ into an intermediate representation:
+$$H^{'} = \text{ReLU} \left( z \cdot W_d^T + b_d \right)$$
 ```python
     # VAE Decoder
     z_input = Input(shape=(latent_dim,))
