@@ -143,7 +143,7 @@ $$z = z_{\text{mean}} + e^{\frac{1}{2}z_{\text {log-var }}} \cdot \boldsymbol{\e
 where, $\boldsymbol{\epsilon}$, is a Gaussian noise vector sampled from $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. The exponential term $e^{\frac{1}{2}z_{\text {log-var }}}$ turns the log variance vector to a positive variance vector. $z$ is the sampled latent variable. 
 
 The implementation of data generation process based on latent space scaling and sampling:
-'''python
+```python
 def generate_data(vae, train_features, train_condition, test_condition, encoder, decoder, sampling_multiplier, batch_size, epochs, latent_dim):
     # Normalize feature data (training)
     feature_scaler = MinMaxScaler().fit(train_features)
@@ -187,7 +187,7 @@ def generate_data(vae, train_features, train_condition, test_condition, encoder,
     generated_data = np.hstack([generated_features, repeated_conditions_denormalized])
 
     return generated_data, generated_features, repeated_conditions_denormalized, history, train_generated_features
-'''
+```
 ## 4.3 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
 $$\overline{y} = \overline{h}(\mathbf{X}) = \frac{1}{K} \sum_{k=1}^{K} h(\mathbf{X}; \vartheta_k, \theta_k)$$
