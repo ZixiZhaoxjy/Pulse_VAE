@@ -131,6 +131,13 @@ With both the encoder and the decoder, the construction of the VAE model is
 
 See the Methods section of the paper for more details.
 ## 4.2 Latent space scaling and sampling to generate the data
+After training the VAE model, it is necessary to sample its latent space to generate new data. This section will specifically explain how to perform scaling and sampling in the latent space.
+### 4.2.1 Latent space scaling informed by prior knowledge
+Certain retirement conditions, e.g., extreme SOH and SOC can be under-represented in the battery recycling pretreatment due to practical constraints. Specifically, the retired batteries exhibit concentrated SOH and SOC, leading to poor estimation performance when confronted with out-of-distribution (OOD) batteries.  This phenomenon results from the fact that retired electric vehicle batteries are collected in batches with similar historical usages and, thus similar SOH conditions. With a stationary rest following, the voltage values of the collected retired batteries are discharged lower than a certain threshold due to the safety concerns of the battery recyclers, resulting in a stationary rest SOC lower than 50%. Even if the explicit battery retirement conditions are still unknown, we can use this approximated prior knowledge to generate enough synthetic data to cover the actual retirement conditions. Given two data generation settings, namely, interpolation and extrapolation, we use different latent space scaling strategies. In the interpolation setting, the scaling matrix $T$ is an identity matrix $I$ assuming the encoder network and decoder network can learn the inherited data structures without taking advantage of any prior knowledge. In the extrapolation setting, however, the assumption cannot be guaranteed due to the OOD issue, a general challenge of machine learning models. Here we use the means of training and testing SOC distributions to define the scaling matrix, a prior knowledge of the battery retirement conditions, then the latent space is scaled as:
+$$\hat{z_mean} = T_mean \cdot z_mean$$
+$$\hat{z_log_var} = T_log_var \cdot z_log_var$$
+
+
 
 ## 4.3 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
@@ -146,5 +153,5 @@ Implementations are based on the ensemble method of the Sklearn Package (version
 # 5. Access
 Access the raw data and processed features [here](https://zenodo.org/uploads/11671216) under the [MIT licence](https://github.com/terencetaothucb/Pulse-Voltage-Response-Generation/blob/main/LICENSE). Correspondence to [Terence (Shengyu) Tao](terencetaotbsi@gmail.com) and CC Prof. [Xuan Zhang](xuanzhang@sz.tsinghua.edu.cn) and [Guangmin Zhou](guangminzhou@sz.tsinghua.edu.cn) when you use, or have any inquiries.
 # 6. Acknowledgements
-[Guangyuan Ma](mailto:magy23@mails.tsinghua.edu.cn) and [Terence (Shengyu) Tao](mailto:terencetaotbsi@gmail.com) at Tsinghua Berkeley Shenzhen Institute revised the testing experiment plan, unified the original file naming, completed adjustable feature engineering code based on preliminary data processing code, executed feature engineering, uploaded feature engineering code and results, and wrote this instruction document based on supplementary materials.  
+[Terence (Shengyu) Tao](mailto:terencetaotbsi@gmail.com) and [Zixi Zhao](zhaozx23@mails.tsinghua.edu.cn)  at Tsinghua Berkeley Shenzhen Institute designed the model and algorithms, developed and tested the experiments, uploaded the model and experimental code, revised the testing experiment plan, and wrote this instruction document based on supplementary materials.  
 
