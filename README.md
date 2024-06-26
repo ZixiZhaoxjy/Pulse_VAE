@@ -85,7 +85,7 @@ Both $H$ and $C$ are then integrated via a cross-attention mechanism, allowing t
 $$AttenEncoder = \text{Attention}(H,C,C)$$ 
 Here is the implementation:
 ```python
-  # Cross-attention in Encoder
+    # Cross-attention in Encoder
     attention_to_encode = MultiHeadAttention(num_heads, key_dim=embedding_dim)(
         query=h_expanded,
         key=condition_embedding_expanded,
@@ -119,7 +119,7 @@ The implementation of the decoder with the attention mechanism is：
 ```
 With both the encoder and the decoder, the construction of the VAE model is
 ```python
-# VAE Model
+    # VAE Model
     _, _, z = encoder([x, condition_input])
     vae_output = decoder([z, condition_input])
     vae = Model(inputs=[x, condition_input], outputs=vae_output)
