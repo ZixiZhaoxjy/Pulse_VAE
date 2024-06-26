@@ -141,6 +141,53 @@ where, $T_{\text{mean}}$ and $T_{\log_\text{var}}$ are the scaling matrices defi
 The sampling step in the VAE is a bridge between the deterministic output of the encoder neural network and the stochastic nature of the scaled latent space. It allows the model to capture the hidden structure of the input data, specifically the pulse voltage response $x$ and $cond$ to explore similar data points. The sampling procedure can be formulated as:
 $$z = z_{\text{mean}} + e^{\frac{1}{2}z_{\log_\text{var}}} \cdot \boldsymbol{\epsilon}$$
 where, $\boldsymbol{\epsilon}$, is a Gaussian noise vector sampled from $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. The exponential term $e^{\frac{1}{2}z_{\log_\text{var}}}$ turns the log variance vector to a positive variance vector. $z$ is the sampled latent variable. 
+
+The implementation of data generation process based on latent space scaling and sampling:
+'''python
+def generate_data(vae, train_features, train_condition, test_condition, encoder, decoder, sampling_multiplier, batch_size, epochs, latent_dim):
+    # Normalize feature data (training)
+    feature_scaler = MinMaxScaler().fit(train_features)
+    train_features_normalized = feature_scaler.transform(train_features)
+
+    # Combine training and testing conditional data for scaling
+    combined_conditions = np.vstack([train_condition, test_condition])
+    # Normalize conditional data (training and testing using the same scaler)
+    condition_scaler = MinMaxScaler().fit(combined_conditions)
+    train_condition_normalized = condition_scaler.transform(train_condition)
+    test_condition_normalized = condition_scaler.transform(test_condition)
+    # Fit the VAE model using training data
+    history = vae.fit([train_features_normalized, train_condition_normalized], train_features_normalized,
+                      epochs=epochs, batch_size=batch_size, verbose=0)
+    # Generate new samples based on testing conditions
+    num_samples = len(test_condition_normalized) * sampling_multiplier
+    print("num_samples",num_samples)
+    random_latent_values_new = K.random_normal(shape=(num_samples, latent_dim), seed=0)
+    random_latent_values_train = K.random_normal(shape=(len(train_condition_normalized) * sampling_multiplier, latent_dim), seed=0)
+
+    # Use the testing conditional input for generating data
+    repeated_conditions = np.repeat(test_condition_normalized, sampling_multiplier, axis=0)
+
+    new_features_normalized = decoder.predict([random_latent_values_new, repeated_conditions])
+
+    # Denormalize the generated feature data
+    generated_features = feature_scaler.inverse_transform(new_features_normalized)
+
+    repeated_conditions_train = np.repeat(train_condition_normalized, sampling_multiplier, axis=0)
+
+    train_features_normalized = decoder.predict([random_latent_values_train, repeated_conditions_train])
+
+    # Denormalize the generated feature data
+    train_generated_features = feature_scaler.inverse_transform(train_features_normalized)
+
+    train_generated_features = np.vstack([train_generated_features, generated_features])
+
+    # Denormalize the repeated conditions to return them to their original scale
+    repeated_conditions_denormalized = condition_scaler.inverse_transform(repeated_conditions)
+    # Combine generated features with their corresponding conditions for further analysis
+    generated_data = np.hstack([generated_features, repeated_conditions_denormalized])
+
+    return generated_data, generated_features, repeated_conditions_denormalized, history, train_generated_features
+'''
 ## 4.3 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
 $$\overline{y} = \overline{h}(\mathbf{X}) = \frac{1}{K} \sum_{k=1}^{K} h(\mathbf{X}; \vartheta_k, \theta_k)$$
