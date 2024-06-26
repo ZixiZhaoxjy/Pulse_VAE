@@ -56,21 +56,74 @@ The entire experiment consists of three steps:
 * Design and train the Attention-VAE model.
 * Latent space scaling and sampling to generate the data.
 * Perform downstream tasks by using generated data.
+
 First, we design a VAE model with attention mechanism. Then, we select the SOC values for training and filter the corresponding data from folder __data__ to train the VAE. After obtaining the VAE model, we perform scaling on the latent space informed by prior knowledge and sample from the scaled latent space to generate data. Finally, we use the generated data to train a random forest model to predict SOH.
 ## 4.1 VAE(variational autoencoder) with cross attention for data generation
 To allow the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$, we introduced the attention mechanism in both the encoder and decoder of the VAE. Here, we use the encoder as an example to illustrate.
 
 The encoder network in the variational autoencoder is designed to process and compress input data into a latent space. It starts by taking the 21-dimensional battery voltage response feature matrix $x$ as main input and retirement condition matrix of the retired batteries $cond=[SOC,SOH]$ as conditional input. The condition input is first transformed into an embedding $C$, belonging to a larger latent space with 64-dimension. The conditional embedding $C$ is formulated as: 
 $$C = \text{ReLU} \left( cond \cdot W_c^T + b_c \right)$$
-where, $W_c$, $b_c$ are the condition embedding neural network weighting matrix and bias matrix, respectively.
-
+where, $W_c$, $b_c$ are the condition embedding neural network weighting matrix and bias matrix, respectively. Here is the implementation:
+```python
+  # Embedding layer for conditional input (SOC + SOH)
+    condition_input = Input(shape=(condition_dim,))
+    condition_embedding = Dense(embedding_dim, activation='relu')(condition_input)
+    condition_embedding_expanded = tf.expand_dims(condition_embedding, 2)
+```
 The main input matrix $x$, representing battery pulse voltage response features, is also transformed into this 64-dimensional latent space:
 $$H = \text{ReLU} \left( x \cdot W_h^T + b_h \right)$$
-where,  $W_h$, $b_h$ are the main input embedding neural network weighting matrix and bias matrix, respectively. 
+where,  $W_h$, $b_h$ are the main input embedding neural network weighting matrix and bias matrix, respectively. Here is the implementation:
+```python
+  # Main input (21-dimensional features)
+    x = Input(shape=(feature_dim,))
+    # VAE Encoder
+    h = Dense(intermediate_dim, activation='relu')(x)
+    h_expanded = tf.expand_dims(h, 2)
+```
 
 Both $H$ and $C$ are then integrated via a cross-attention mechanism, allowing the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$:
 $$AttenEncoder = \text{Attention}(H,C,C)$$ 
+Here is the implementation:
+```python
+  # Cross-attention in Encoder
+    attention_to_encode = MultiHeadAttention(num_heads, key_dim=embedding_dim)(
+        query=h_expanded,
+        key=condition_embedding_expanded,
+        value=condition_embedding_expanded
+    )
+    attention_output_squeezed = tf.squeeze(attention_to_encode, 2)
 
+    z_mean = Dense(latent_dim)(attention_output_squeezed)
+    z_log_var = Dense(latent_dim)(attention_output_squeezed)
+    z = Lambda(sampling, output_shape=(latent_dim,))([z_mean, z_log_var])
+    encoder = Model(inputs=[x, condition_input], outputs=[z_mean, z_log_var, z])
+```
+The implementation of the decoder with the attention mechanism is： 
+```python
+    # VAE Decoder
+    z_input = Input(shape=(latent_dim,))
+    decoder_h = Dense(intermediate_dim, activation='relu')
+    decoder_mean = Dense(feature_dim, activation='sigmoid')
+    h_decoded = decoder_h(z_input)
+    h_decoded_expanded = tf.expand_dims(h_decoded, 2)
+
+    # Cross-attention in Decoder
+    attention_to_decoded = MultiHeadAttention(num_heads, key_dim=embedding_dim)(
+        query=h_decoded_expanded,
+        key=condition_embedding_expanded,
+        value=condition_embedding_expanded
+    )
+    attention_output_decoded_squeezed = tf.squeeze(attention_to_decoded, 2)
+    _x_decoded_mean = decoder_mean(attention_output_decoded_squeezed)
+    decoder = Model(inputs=[z_input, condition_input], outputs=_x_decoded_mean)
+```
+With both the encoder and the decoder, the construction of the VAE model is
+```python
+# VAE Model
+    _, _, z = encoder([x, condition_input])
+    vae_output = decoder([z, condition_input])
+    vae = Model(inputs=[x, condition_input], outputs=vae_output)
+```
 
 See the Methods section of the paper for more details.
 ## 4.2 Random forest regressor for SOH estimation
