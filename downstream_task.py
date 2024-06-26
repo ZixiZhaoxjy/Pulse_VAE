@@ -36,13 +36,10 @@ def run_SOH_experiment(masked_generated_Fts_dir, masked_generated_SOH_dir, case_
     y_pred_phase1 = model_phase1.predict(X_test)
     mape_phase1, std_phase1 = mean_absolute_percentage_error(y_test, y_pred_phase1)
 
-    # plot_soh_scatter(y_test, y_pred_phase1, title=f"Phase 1: Testing SOC={test_SOC_index}")
-
     # Phase 2: Train Model on Generated Data for Selected Testing SOC
     model_phase2 = RandomForestRegressor(n_estimators=20,max_depth=64,bootstrap=False).fit(X_generated, SOH_generated)
     y_pred_phase2 = model_phase2.predict(X_test)
     mape_phase2, std_phase2 = mean_absolute_percentage_error(y_test, y_pred_phase2)
-    # plot_soh_scatter(y_test, y_pred_phase2, title=f"Phase 2: Testing SOC={test_SOC_index}")
 
     return mape_phase1, std_phase1, mape_phase2, std_phase2
 
@@ -70,9 +67,6 @@ def run_SOH_experiments(masked_generated_Fts_dir, masked_generated_SOH_dir, case
 
 def preprocess(case_index, hyperparams, test_condition, test_Fts, train_SOC_values, train_SOC_values_cases, generated_Fts):
 
-    x_ticks = [soc * 100 for soc in hyperparams['all_SOC_values']]  # All SOC values
-
-    repeated_test_Fts = np.repeat(test_Fts, hyperparams['sampling_multiplier'], axis=0)
     repeated_test_condition = np.repeat(test_condition[:, 0:2], hyperparams['sampling_multiplier'], axis=0)
 
     # Loop over testing SOC values and features
@@ -92,16 +86,13 @@ def preprocess(case_index, hyperparams, test_condition, test_Fts, train_SOC_valu
 
         # Create a boolean mask for the specific SOC value
         mask_soc = train_SOC_values[1] if (len(train_SOC_values_cases)) != 1 else (train_SOC_values[0])
-
         Fts_mask = repeated_test_condition[:, 0] == mask_soc
-
         SOH_mask = repeated_test_condition[:, 0] == test_SOC
 
         # Apply the mask to generated_Fts
         masked_generated_Fts = generated_Fts[Fts_mask]
         # Apply the mask to generated SOH
         masked_generated_SOH = repeated_test_condition[SOH_mask, 1]
-
 
         test_result.append(masked_generated_Fts)
         n = len(masked_generated_Fts)

@@ -10,8 +10,6 @@ from configuration import hyperparams, train_SOC_values_cases
 # --- Set Seed for Reproducibility ---
 
 def set_seeds(seed=0):
-    plt.rcParams['font.size'] = 36
-    plt.rcParams['font.family'] = 'Arial'
     os.environ['PYTHONHASHSEED'] = '0'
     np.random.seed(seed)  # For numpy
     tf.random.set_seed(seed)  # For tensorflow
@@ -83,6 +81,3 @@ if __name__ == "__main__":
         print("MAPE Phase 2:", mape_results_phase2)
         print("Standard Deviation Phase 1:", std_results_phase1)
         print("Standard Deviation Phase 2:", std_results_phase2)
-    # Visualization of results outside the loop
-
-    #visualize_experiment_results(train_SOC_values_cases, hyperparams['all_SOC_values'], all_mape_results_phase1, all_mape_results_phase2)

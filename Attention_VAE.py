@@ -55,7 +55,6 @@ def attention_vae(feature_dim, condition_dim, embedding_dim, intermediate_dim, l
         value=condition_embedding_expanded
     )
     attention_output_decoded_squeezed = tf.squeeze(attention_to_decoded, 2)
-
     _x_decoded_mean = decoder_mean(attention_output_decoded_squeezed)
     decoder = Model(inputs=[z_input, condition_input], outputs=_x_decoded_mean)
 
