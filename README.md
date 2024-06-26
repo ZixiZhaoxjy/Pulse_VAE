@@ -98,7 +98,7 @@ Here is the implementation:
     z = Lambda(sampling, output_shape=(latent_dim,))([z_mean, z_log_var])
     encoder = Model(inputs=[x, condition_input], outputs=[z_mean, z_log_var, z])
 ```
-The implementation of the decoder with the attention mechanism is： 
+The primary function of the Decoder Network is to transform the sampled latent variable $z$ back into the original dataspace, reconstructing the input data or generating new data attended on the original or unseen retirement conditions. The implementation of the decoder with the attention mechanism is： 
 ```python
     # VAE Decoder
     z_input = Input(shape=(latent_dim,))
@@ -126,7 +126,9 @@ With both the encoder and the decoder, the construction of the VAE model is
 ```
 
 See the Methods section of the paper for more details.
-## 4.2 Random forest regressor for SOH estimation
+## 4.2 Latent space scaling and sampling to generate the data
+
+## 4.3 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
 $$\overline{y} = \overline{h}(\mathbf{X}) = \frac{1}{K} \sum_{k=1}^{K} h(\mathbf{X}; \vartheta_k, \theta_k)$$
 where $\overline{y}$ is the predicted SOH value vector. $K$ is the tree number in the random forest. $\vartheta_k$ and $\theta_k$ are the hyperparameters. i.e., the minimum leaf size and the maximum depth of the $k$ th tree in the random forest, respectively. In this study, the hyperparameters are set as equal across different battery retirement cases, i.e., $K=20$ , $\vartheta_k=1$, and $\theta_k=64$, for a fair comparison with the same model capability. 
