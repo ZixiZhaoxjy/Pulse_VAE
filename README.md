@@ -2,9 +2,9 @@
 Rapid and accurate pretreatment for state of health (SOH) estimation in retired batteries is crucial for recycling sustainability. Data-driven approaches, while innovative in SOH estimation, require exhaustive data collection and are sensitive to retirement conditions. Here we show that the generative machine learning strategy can alleviate such a challenge, validated through a unique dataset of 2720 retired lithium-ion battery samples, covering 3 cathode material types, 3 physical formats, 4 capacity designs, and 4 historical usages. With generated data, a simple regressor realizes an accurate pretreatment, with mean absolute percentage errors below 6%, even under unseen retirement conditions.
 
 # 1. Setup
-## Enviroments
+## 1.1 Enviroments
 * Python (Jupyter notebook) 
-## Python requirements
+## 1.2 Python requirements
 * python=3.11.5
 * numpy=1.26.4
 * tensorflow=2.15.0
@@ -16,7 +16,7 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 
 # 2. Datasets
 * We physically tested 270 retired lithium-ion batteries, covering 3 cathode types, 4 historical usages, 3 physical formats, and 4 capacity designs. See more details on [Pulse-Voltage-Response-Generation](https://github.com/terencetaothucb/Pulse-Voltage-Response-Generation).
-## Battery Types
+## 2.1 Battery Types
 |Cathode Material|Nominal Capacity (Ah)|Physical Format|Historical Usage|Quantity|
 |:--|:--|:--|:--|:--|
 |NMC|2.1|Cylinder|Lab Accelerated Aging|67 (from 12 physical batteries)|
@@ -25,7 +25,7 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 |LFP|35|Square Aluminum Shell|HEV2|56|
 
 # 3. Experiment
-## Settings
+## 3.1 Settings
 * Python file "configuration" contains all the hyperparameters. Change these parameters to choose battery type, model size and testing conditions.
 ```python
 hyperparams = {
@@ -45,13 +45,18 @@ hyperparams = {
     'mode': 3,  # when case > 3, interpolation ends; set mode to 99 for only interpolation, to -1 for only extrapolation
 }
 ```
-## Run
+## 3.2 Run
 * After changing the experiment settings, __run `main.py` directly.__
 * The experiment contains two parts:
     * Leverage generative machine learning to generate data under unseen retirement conditions based on already-measured data.
     * Use the generated data to supervise a random forest regressor which estimates the battery state of health (SOH).
 
 # 4. Experiment Details
+The entire experiment consists of three steps: 
+* Design and train the Attention-VAE model.
+* Latent space scaling and sampling to generate the data.
+* Perform downstream tasks by using generated data.
+First, we design a VAE model with attention mechanism. Then, we select the SOC values for training and filter the corresponding data from folder __data__ to train the VAE. After obtaining the VAE model, we perform scaling on the latent space informed by prior knowledge and sample from the scaled latent space to generate data. Finally, we use the generated data to train a random forest model to predict SOH.
 ## 4.1 VAE(variational autoencoder) with cross attention for data generation
 To allow the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$, we introduced the attention mechanism in both the encoder and decoder of the VAE. Here, we use the encoder as an example to illustrate.
 
@@ -66,6 +71,7 @@ where,  $W_h$, $b_h$ are the main input embedding neural network weighting matri
 Both $H$ and $C$ are then integrated via a cross-attention mechanism, allowing the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$:
 $$AttenEncoder = \text{Attention}(H,C,C)$$ 
 
+
 See the Methods section of the paper for more details.
 ## 4.2 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
@@ -73,5 +79,8 @@ $$\overline{y} = \overline{h}(\mathbf{X}) = \frac{1}{K} \sum_{k=1}^{K} h(\mathbf
 where $\overline{y}$ is the predicted SOH value vector. $K$ is the tree number in the random forest. $\vartheta_k$ and $\theta_k$ are the hyperparameters. i.e., the minimum leaf size and the maximum depth of the $k$ th tree in the random forest, respectively. In this study, the hyperparameters are set as equal across different battery retirement cases, i.e., $K=20$ , $\vartheta_k=1$, and $\theta_k=64$, for a fair comparison with the same model capability. 
 
 Implementations are based on the ensemble method of the Sklearn Package (version 1.3.1) in the Python 3.11.5 environment, with a random state at 0.
-# Access
+# 5. Access
 Access the raw data and processed features [here](https://zenodo.org/uploads/11671216) under the [MIT licence](https://github.com/terencetaothucb/Pulse-Voltage-Response-Generation/blob/main/LICENSE). Correspondence to [Terence (Shengyu) Tao](terencetaotbsi@gmail.com) and CC Prof. [Xuan Zhang](xuanzhang@sz.tsinghua.edu.cn) and [Guangmin Zhou](guangminzhou@sz.tsinghua.edu.cn) when you use, or have any inquiries.
+# 6. Acknowledgements
+[Guangyuan Ma](mailto:magy23@mails.tsinghua.edu.cn) and [Terence (Shengyu) Tao](mailto:terencetaotbsi@gmail.com) at Tsinghua Berkeley Shenzhen Institute revised the testing experiment plan, unified the original file naming, completed adjustable feature engineering code based on preliminary data processing code, executed feature engineering, uploaded feature engineering code and results, and wrote this instruction document based on supplementary materials.  
+
