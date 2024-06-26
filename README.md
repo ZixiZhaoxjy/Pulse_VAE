@@ -107,7 +107,10 @@ $$H^{'} = \text{ReLU} \left( z \cdot W_d^T + b_d \right)$$
     decoder_mean = Dense(feature_dim, activation='sigmoid')
     h_decoded = decoder_h(z_input)
     h_decoded_expanded = tf.expand_dims(h_decoded, 2)
-
+```
+$H^{'}$ is then integrated via a cross-attention mechanism, allowing the network to focus on relevant aspects of the voltage response matrix $x$ conditioned by the additional retirement condition information $cond$:
+$$AttenDecoder = \text{Attention}(H^{'},C^{'},C^{'})$$ 
+```python
     # Cross-attention in Decoder
     attention_to_decoded = MultiHeadAttention(num_heads, key_dim=embedding_dim)(
         query=h_decoded_expanded,
