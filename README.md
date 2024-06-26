@@ -139,7 +139,7 @@ $$\hat{z}_{\log_\text{var}} = T_{\log_\text{var}} \cdot z_{\log_\text{var}}$$
 where, $T_{\text{mean}}$ and $T_{\log_\text{var}}$ are the scaling matrices defined by the broadcasted mean, and variance ratio between the testing and training SOC distributions. We emphasize that the SOH distributions are irrelevant to such a scaling. This is because these identical SOH values could be seen as representing physically distinct batteries, i.e., they do not affect the scaling process. Thus, feeding the model with the same SOH values during training and reconstruction does not present an OOD problem. On the other hand, for the SOC dimension, our goal is to generate data under unseen SOC conditions, where physical tests cannot be exhausted.
 ### 4.2.2 Sampling in the scaled latent space 
 The sampling step in the VAE is a bridge between the deterministic output of the encoder neural network and the stochastic nature of the scaled latent space. It allows the model to capture the hidden structure of the input data, specifically the pulse voltage response $x$ and $cond$ to explore similar data points. The sampling procedure can be formulated as:
-$$ z = z_{\text{mean}} + e^{\frac{1}{2}z_{\log_\text{var}}} \cdot \boldsymbol{\epsilon}$$
+$$z = z_{\text{mean}} + e^{\frac{1}{2}z_{\log_\text{var}}} \cdot \boldsymbol{\epsilon}$$
 where, $\boldsymbol{\epsilon}$, is a Gaussian noise vector sampled from $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. The exponential term $e^{\frac{1}{2}z_{\log_\text{var}}}$ turns the log variance vector to a positive variance vector. $z$ is the sampled latent variable. 
 ## 4.3 Random forest regressor for SOH estimation
 The random forest for regression can be formulated as:
