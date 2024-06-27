@@ -142,7 +142,7 @@ The sampling step in the VAE is a bridge between the deterministic output of the
 $$z = z_{\text{mean}} + e^{\frac{1}{2}z_{\text {log-var }}} \cdot \boldsymbol{\epsilon}$$
 where, $\boldsymbol{\epsilon}$, is a Gaussian noise vector sampled from $\boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$. The exponential term $e^{\frac{1}{2}z_{\text {log-var }}}$ turns the log variance vector to a positive variance vector. $z$ is the sampled latent variable. 
 
-The implementation of data generation process based on latent space scaling and sampling:
+The implementation of data generation process based on latent space scaling and sampling is as follows.
 ```python
 def generate_data(vae, train_features, train_condition, test_condition, encoder, decoder, sampling_multiplier, batch_size, epochs, latent_dim):
     # Normalize feature data (training)
