@@ -25,7 +25,7 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 |LFP|35|Square Aluminum Shell|HEV2|56|
 
 |:--|:--|:--|
-||Loss_emd|Loss_cd|
+|Part|Loss_emd|Loss_cd|
 |vessel_left|51214.5305|87877.3735|
 |NMC|21|Pouch|
 
