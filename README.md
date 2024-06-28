@@ -24,6 +24,12 @@ Rapid and accurate pretreatment for state of health (SOH) estimation in retired 
 |NMC|21|Pouch|BEV1|52|
 |LFP|35|Square Aluminum Shell|HEV2|56|
 
+|:--|:--|:--|
+||Loss_emd|Loss_cd|
+|vessel_left|51214.5305|87877.3735|
+|NMC|21|Pouch|
+
+
 # 3. Experiment
 ## 3.1 Settings
 * Python file "configuration" contains all the hyperparameters. Change these parameters to choose battery type, model size and testing conditions.
